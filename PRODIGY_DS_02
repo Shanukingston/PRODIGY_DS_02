@@ -1,0 +1,62 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+df = pd.read_csv('/content/archive.zip')
+df.head()
+df.info()
+df.nunique()
+df['Engine Size (L)'].describe()
+null_data=df[df['Engine Size (L)'].isnull()==True]
+null_data
+df['Engine Size (L)'].fillna('Electric Motor',inplace=True)
+df.info()
+df[df['Torque (lb-ft)'].isnull()==True]
+df['Torque (lb-ft)'].fillna(0,inplace=True)
+df.info()
+unique_year=df["Year"].sort_values().unique()
+unique_year
+df['Car Model'].groupby(df['Year']).count().plot(kind='bar')
+plt.title('Year wise released car models',fontdict={'fontname':"Canadian Shields",'fontsize':15})
+plt.xlabel('Year',fontdict={'fontsize':16})
+df.describe()
+df.info()
+for column in df.columns:
+    print(column.upper())
+    print(df[column].value_counts())
+    print("-"*50)
+df[df["0-60 MPH Time (seconds)"] == "< 1.9"]
+df.loc[df["0-60 MPH Time (seconds)"] == "< 1.9", "0-60 MPH Time (seconds)"] = "1.9"
+df[df["0-60 MPH Time (seconds)"] == "1.9"]
+df.columns
+bad_cols = ['Horsepower', 'Torque (lb-ft)', 'Price (in USD)']
+df[bad_cols] = df[bad_cols].astype("str")
+def remove_unwanted(characters, cols):
+    for character in characters:
+        charCol = []
+        for col in cols:
+            for i in df[col]:
+                if character in i:
+                    charCol.append(col)
+                        
+        charCol = list(set(charCol))
+        
+        for i in charCol:
+            df[i] = df[i].str.replace(character, "")
+
+remove_unwanted(["+", ",", "-"], bad_cols)
+df
+df["Horsepower"] = df["Horsepower"].astype("int")
+df["Torque (lb-ft)"] = df["Torque (lb-ft)"].replace("", np.NaN).astype("float")
+df["0-60 MPH Time (seconds)"] = df["0-60 MPH Time (seconds)"].astype("float")
+df["Price (in USD)"] = df["Price (in USD)"].astype("int")
+df
+df.describe()
+df.info()
+df.dropna(inplace=True)
+df.info()
+df.dropna(inplace=True)
+df.info()
